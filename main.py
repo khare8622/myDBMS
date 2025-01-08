@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import shutil
 
 current_db = None
 
@@ -293,6 +294,35 @@ def delete_from_table(table_name, where_condition=None):
         print("No database selected. Use 'USE db_name' first.")
 
 
+def delete_table(table_name):
+    if current_db:
+        table_path = os.path.join(current_db, f"{table_name}.json")
+        if os.path.exists(table_path):
+            os.remove(table_path)
+            print(f"Table {table_name} deleted successfully.")
+        else:
+            print(f"Error: Table {table_name} does not exist in the database.")
+    else:
+        print("Error: No database selected. Use 'USE db_name' first.")
+
+current_db = None
+def drop_db(db_name):
+    global current_db  # Declare global only when modifying current_db
+    
+    if current_db == db_name:
+        current_db = None  # Reset current_db if it's the one being dropped
+    
+    db_path = os.path.join(os.getcwd(), db_name)
+    if os.path.exists(db_path):
+        confirm = input(f"Are you sure you want to delete the database {db_name}? (yes/no): ").strip().lower()
+        if confirm == "yes":
+            shutil.rmtree(db_path)  # Delete the entire database folder and its contents
+            print(f"Database {db_name} deleted successfully.")
+        else:
+            print("Database deletion aborted.")
+    else:
+        print(f"Error: Database {db_name} does not exist.")
+
 
 
 def main():
@@ -378,6 +408,19 @@ def main():
             table_name = parts[0].replace("DELETE FROM", "").strip()
             where_condition = parts[1].strip() if len(parts) > 1 else None
             delete_from_table(table_name, where_condition)
+        elif command.lower().startswith("delete table"):
+            try:
+                table_name = command.split()[-1]
+                delete_table(table_name)
+            except IndexError:
+                print("Syntax Error: DELETE TABLE table_name;")
+        elif command.lower().startswith("drop database"):
+            try:
+                _, _, db_name = command.split(maxsplit=2)
+                drop_db(db_name)
+            except ValueError:
+                print("Syntax Error: DROP DATABASE db_name;")
+
         else:
             print("Unknown command or syntax error. Please try again.")
 
