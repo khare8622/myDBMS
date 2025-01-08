@@ -35,11 +35,11 @@ This is a custom-built Database Management System (DBMS) implemented in Python. 
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/custom-dbms.git
+   git clone https://github.com/khare8622/myDBMS.git
    ```
 2. Navigate to the project directory:
    ```bash
-   cd custom-dbms
+   cd myDBMS
    ```
 3. Run the script:
    ```bash
